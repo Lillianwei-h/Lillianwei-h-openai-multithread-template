@@ -1,0 +1,4 @@
+base_url: null
+api_key: 
+model: gpt-4o
+max_tokens: 1000
