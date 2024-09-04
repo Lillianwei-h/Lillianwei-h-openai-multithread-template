@@ -11,7 +11,7 @@ This project is a template to enable multithread generation of OpenAI's gpt api.
     ```
 3. Prepare your dataset
     The format should be:
-    ```json
+    ```
     {
         "{id_1}": {
             "question": {question}, // question is a string
@@ -42,15 +42,14 @@ This project is a template to enable multithread generation of OpenAI's gpt api.
 
 ## Examples
 ### Ask mode
+```bash
+python main.py -t 10 -i 'YOUR_INPUT_PATH.json' -s
+```
 
-    ```bash
-    python main.py -t 10 -i 'YOUR_INPUT_PATH.json' -s
-    ```
 ### Eval mode
-
-    ```bash
-    python main.py -t 10 -i 'YOUR_INPUT_PATH.json' -m 'eval' -d -s
-    ```
+ ```bash
+python main.py -t 10 -i 'YOUR_INPUT_PATH.json' -m 'eval' -d -s
+```
 
 
 
