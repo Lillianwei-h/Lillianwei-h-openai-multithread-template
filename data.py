@@ -29,29 +29,40 @@ def encode_image(image_path):
 def process_asking_content(d, all_dict, mode):
     question = d['question']
     content = []
-    if mode == "eval":
-        answer = d['answer']
-        content.append({"type": "text", "text": f"### Question: {question}\n### Answer:\n"})
-        for a in answer:
-            if os.path.exists(a):
-                base64_image = encode_image(a)
+    content.append({"type": "text", "text": f"### Question:\n"})
+    for q in question:
+        if q['text'] is not None:
+            content.append({"type": "text", "text": q['text']})
+        if q['image'] is not None:
+            if os.path.exists(q['image']):
+                base64_image = encode_image(q['image'])
                 content.append({"type": "image_url","image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}})
             else:
-                content.append({"type": "text", "text": a})
-    elif mode == "ask":
-        content.append({"type": "text", "text": f"{question}"})
-    else:
-        print(f"{mode} doesn't support yet.")
+                print(f"File {q['image']} doesn't exist.")
+
+    if mode == "eval":
+        answer = d['answer']
+        content.append({"type": "text", "text": f"### Answer:\n"})
+        for a in answer:
+            if a['text'] is not None:
+                content.append({"type": "text", "text": a['text']})
+            if a['image'] is not None:
+                if os.path.exists(a['image']):
+                    base64_image = encode_image(a['image'])
+                    content.append({"type": "image_url","image_url": {"url": f"data:image/jpeg;base64,{base64_image}"}})
+                else:
+                    print(f"File {a['image']} doesn't exist.")
+
     all_dict[d['id']]['content'] = content
 
-def get_data(filepath, trucate_len = None, mode = "ask"):
+def get_data(filepath, trucate_len = None, mode = "ans"):
     with open(filepath, 'r') as f:
         data = json.load(f)
     if trucate_len is not None:
         data = data[:trucate_len]
 
     all_dict = {}
-    for d in data:
+    for _ in len(data):
         all_dict[d['id']] = {}
     for d in data:
         process_asking_content(d, all_dict, mode)
