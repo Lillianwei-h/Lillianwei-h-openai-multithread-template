@@ -25,12 +25,16 @@ def process(content):
 
 def thread_worker(id, content):
     result = process(content['content'])
-    answer_dict[id]['response'] = result
+    content['gpt_answer'] = result
+    content.pop('content', None)
+    answer_dict[id] = content
+
     if args.decode:
         answer = decode_answer(result)
         answer_dict[id]['answer'] = answer
     with open(args.temp_output_path, 'w') as f:
-        json.dump(answer_dict, f, indent = 4)
+        answer_list = [value for _,value in answer_dict.items()]
+        json.dump(answer_list, f, indent = 4)
 
 def process_with_limited_threads(content_dict, max_threads):
     with ThreadPoolExecutor(max_threads) as executor:
@@ -72,7 +76,8 @@ answer_dict = {}
 process_with_limited_threads(content_dict, max_threads=args.thread_num)
 
 with open(args.output_path, 'w') as f:
-    json.dump(answer_dict, f, indent = 4)
+    answer_list = [value for _,value in answer_dict.items()]
+    json.dump(answer_list, f, indent = 4)
 
 print(f"Save output to: {args.output_path}")
 

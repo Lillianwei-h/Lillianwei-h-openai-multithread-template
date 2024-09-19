@@ -1,6 +1,5 @@
 from openai import OpenAI
 import yaml
-from data import SYSTEM_PROMPT
 
 with open('gpt_config.yaml', 'r') as file:
     config = yaml.safe_load(file)
@@ -14,10 +13,6 @@ def ask_gpt(content):
     response = client.chat.completions.create(
         model = config['model'],
         messages=[
-            {
-                "role": "system",
-                "content": [{"type": "text", "content": SYSTEM_PROMPT}]
-            },
             {
                 "role": "user",
                 "content": content

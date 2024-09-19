@@ -26,10 +26,12 @@ def encode_image(image_path):
   with open(image_path, "rb") as image_file:
     return base64.b64encode(image_file.read()).decode('utf-8')
 
-def process_asking_content(d, all_dict, mode):
-    question = d['question']
+def process_asking_content(d, i, all_dict, mode):
     content = []
+    content.append({"type": "text", "text": SYSTEM_PROMPT})
     content.append({"type": "text", "text": f"### Question:\n"})
+    
+    question = d['question']
     for q in question:
         if q['text'] is not None:
             content.append({"type": "text", "text": q['text']})
@@ -53,7 +55,8 @@ def process_asking_content(d, all_dict, mode):
                 else:
                     print(f"File {a['image']} doesn't exist.")
 
-    all_dict[d['id']]['content'] = content
+    all_dict[i] = d
+    all_dict[i]['content'] = content
 
 def get_data(filepath, trucate_len = None, mode = "ans"):
     with open(filepath, 'r') as f:
@@ -62,10 +65,13 @@ def get_data(filepath, trucate_len = None, mode = "ans"):
         data = data[:trucate_len]
 
     all_dict = {}
-    for _ in len(data):
-        all_dict[d['id']] = {}
+    for _ in range(len(data)):
+        all_dict[_] = {}
+
+    i = 0
     for d in data:
-        process_asking_content(d, all_dict, mode)
+        process_asking_content(d, i, all_dict, mode)
+        i+=1
 
     return all_dict
 
